@@ -85,5 +85,14 @@ public class TaskController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
+    @DeleteMapping("/tasks/{id}")
+    public void deleteTask(@PathVariable int id) {
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                tasks.remove(task);
+                return;
+            }
+        }
+    }
 
 }
