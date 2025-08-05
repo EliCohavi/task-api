@@ -1,6 +1,8 @@
 package com.elicohavi.task_api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,4 +41,16 @@ public class TaskController {
         tasks.add(task);
         return task;
     }
+
+    @GetMapping("/tasks/{id}")
+    public Task getTask(@PathVariable int id) {
+
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                return task;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+    }
+
 }
