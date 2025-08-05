@@ -53,4 +53,19 @@ public class TaskController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
+    @PutMapping("/tasks/{id}")
+    public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
+
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                task.setTitle(updatedTask.getTitle());
+                task.setDescription(updatedTask.getDescription());
+                task.setCompleted(updatedTask.isCompleted());
+                return task;
+
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+    }
+
 }
