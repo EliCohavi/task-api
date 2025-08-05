@@ -33,4 +33,10 @@ public class TaskController {
         return tasks;
     }
 
+    @PostMapping("/tasks")
+    public Task createTask(@RequestBody Task task) {
+        task.setId(idCounter.getAndIncrement());
+        tasks.add(task);
+        return task;
+    }
 }
