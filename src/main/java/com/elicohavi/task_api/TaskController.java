@@ -62,10 +62,28 @@ public class TaskController {
                 task.setDescription(updatedTask.getDescription());
                 task.setCompleted(updatedTask.isCompleted());
                 return task;
-
             }
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
     }
+
+    @PatchMapping("/tasks/{id}")
+    public Task patchTask(@PathVariable int id, @RequestBody Task patchedTask) {
+
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                if (patchedTask.getTitle() != null) {
+                    task.setTitle(patchedTask.getTitle());
+                }
+                if (patchedTask.getDescription() != null) {
+                    task.setDescription(patchedTask.getDescription());
+                }
+                task.setCompleted(patchedTask.isCompleted());
+                return task;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+    }
+
 
 }
