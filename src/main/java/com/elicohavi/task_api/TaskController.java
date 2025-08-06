@@ -1,98 +1,86 @@
 package com.elicohavi.task_api;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 @RestController
 public class TaskController {
 
-    private ArrayList<Task> tasks = new ArrayList<>();
+    @Autowired
+    private TaskRepository repository;
 
-    private AtomicInteger idCounter = new AtomicInteger(1);
+    //Constructor based seeding of initial tasks
+    public TaskController() {}
 
-    public TaskController() {
-        Task task1 = new Task(1, "Dishes",
-                "Unload Dishwasher and load sink dishes.", false);
-        tasks.add(task1);
-        Task task2 = new Task(2, "Laundry",
-                "Switch loads and hang up clean clothes.", false);
-        tasks.add(task2);
-        Task task3 = new Task(3, "Gas",
-                "Fill up gas tank and handheld can.", false);
-        tasks.add(task3);
-        Task task4 = new Task(4, "Doctor",
-                "Schedule Doctor appointment", false);
-        tasks.add(task4);
+    //Use @PostConstruct to run after dependency injection
+    @PostConstruct
+    public void init() {
+        repository.save(new Task("Dishes", "Unload Dishwasher and load sink dishes.", false));
+        repository.save(new Task("Laundry", "Switch loads and hang up clean clothes.", false));
+        repository.save(new Task("Gas", "Fill up gas tank and handheld can.", false));
+        repository.save(new Task("Doctor", "Schedule Doctor appointment", false));
     }
-    @GetMapping("/tasks")
+
+        @GetMapping("/tasks") // Return all tasks
     public List<Task> getTasks() {
-        return tasks;
+        return repository.findAll();
     }
 
-    @PostMapping("/tasks")
+    @PostMapping("/tasks") // Add Tasks to Repo
     public Task createTask(@RequestBody Task task) {
-        task.setId(idCounter.getAndIncrement());
-        tasks.add(task);
-        return task;
+        return repository.save(task);
     }
 
-    @GetMapping("/tasks/{id}")
+    @GetMapping("/tasks/{id}") // Return task by ID
     public Task getTask(@PathVariable int id) {
 
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
     }
 
-    @PutMapping("/tasks/{id}")
+    @PutMapping("/tasks/{id}") //Update Individual Task
     public Task updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
 
-        for (Task task : tasks) {
-            if (task.getId() == id) {
                 task.setTitle(updatedTask.getTitle());
                 task.setDescription(updatedTask.getDescription());
-                task.setCompleted(updatedTask.isCompleted());
-                return task;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+                task.setCompleted(updatedTask.getCompleted());
+
+                return repository.save(task);
     }
 
-    @PatchMapping("/tasks/{id}")
-    public Task patchTask(@PathVariable int id, @RequestBody Task patchedTask) {
+    @PatchMapping("/tasks/{id}") //Partially Update Individual Task
+    public Task patchTask(@PathVariable int id, @RequestBody Task partialUpdate) {
 
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                if (patchedTask.getTitle() != null) {
-                    task.setTitle(patchedTask.getTitle());
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+
+                if (partialUpdate.getTitle() != null) {
+                    task.setTitle(partialUpdate.getTitle());
                 }
-                if (patchedTask.getDescription() != null) {
-                    task.setDescription(patchedTask.getDescription());
+                if (partialUpdate.getDescription() != null) {
+                    task.setDescription(partialUpdate.getDescription());
                 }
-                task.setCompleted(patchedTask.isCompleted());
-                return task;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+                if (partialUpdate.getCompleted()!= null) {
+
+                    task.setCompleted(partialUpdate.getCompleted());
+                }
+
+                return repository.save(task);
     }
 
-    @DeleteMapping("/tasks/{id}")
+    @DeleteMapping("/tasks/{id}") // Delete Task by ID
     public void deleteTask(@PathVariable int id) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                tasks.remove(task);
-                return;
-            }
-        }
+        Task task = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+
+        repository.delete(task);
     }
 
 }

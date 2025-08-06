@@ -1,20 +1,24 @@
 package com.elicohavi.task_api;
 
+import jakarta.persistence.*;
 
-
+@Entity
 public class Task {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String title;
     private String description;
-    private boolean completed;
+    private Boolean completed;
 
-    public Task(int id, String title, String description, boolean completed) {
-        this.id = id;
+    public Task(String title, String description, Boolean completed) {
         this.title = title;
         this.description = description;
         this.completed = completed;
     }
+
+    public Task() {} // No args constructor for JPA
 
     public int getId() {
         return id;
@@ -40,11 +44,11 @@ public class Task {
         this.description = description;
     }
 
-    public boolean isCompleted() {
+    public Boolean getCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 
