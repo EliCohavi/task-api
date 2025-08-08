@@ -20,10 +20,12 @@ public class TaskController {
     //Use @PostConstruct to run after dependency injection
     @PostConstruct
     public void init() {
-        repository.save(new Task("Dishes", "Unload Dishwasher and load sink dishes.", false));
-        repository.save(new Task("Laundry", "Switch loads and hang up clean clothes.", false));
-        repository.save(new Task("Gas", "Fill up gas tank and handheld can.", false));
-        repository.save(new Task("Doctor", "Schedule Doctor appointment", false));
+        if (repository.count() == 0) { // Only seed if no tasks are in DB
+            repository.save(new Task("Dishes", "Unload Dishwasher and load sink dishes.", false));
+            repository.save(new Task("Laundry", "Switch loads and hang up clean clothes.", false));
+            repository.save(new Task("Gas", "Fill up gas tank and handheld can.", false));
+            repository.save(new Task("Doctor", "Schedule Doctor appointment", false));
+        }
     }
 
         @GetMapping("/tasks") // Return all tasks
