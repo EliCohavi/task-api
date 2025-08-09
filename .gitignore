@@ -1,10 +1,12 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Maven build output
+/target/
+!/src/main/**/target/
+!/src/test/**/target/
 
-### STS ###
+# Maven wrapper jar
+.mvn/wrapper/maven-wrapper.jar
+
+# STS (Spring Tool Suite) files
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +15,43 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# IntelliJ IDEA files
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans files
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# Gradle build directories (if used)
+/build/
+!/src/main/**/build/
+!/src/test/**/build/
+
+# VS Code files
 .vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Docker (optional, add if you have local Docker config or volumes)
+/docker-compose.override.yml
+
+# Environment variables or secret files
+.env
+
+# Optional: H2 database files (remove or keep depending on your preference)
+/data/
